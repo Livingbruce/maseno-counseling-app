@@ -1,0 +1,20 @@
+{
+  "name": "maseno-counseling-bot",
+  "version": "1.0.0",
+  "description": "Maseno Counseling Bot - Backend API and Dashboard",
+  "type": "module",
+  "scripts": {
+    "build": "cd dashboard && npm run build",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:dashboard\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:dashboard": "cd dashboard && npm run dev",
+    "install:all": "npm install && cd backend && npm install && cd ../dashboard && npm install",
+    "build:all": "cd backend && npm install && cd ../dashboard && npm install && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

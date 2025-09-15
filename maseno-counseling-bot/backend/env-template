@@ -1,0 +1,15 @@
+# Database Configuration
+DATABASE_URL=postgresql://username:password@ep-withered-shape-abox0wby-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+
+# JWT Secret (generate a strong secret)
+JWT_SECRET=your-super-secret-jwt-key-here
+
+# Telegram Bot (get from @BotFather)
+BOT_TOKEN=your-telegram-bot-token
+
+# Server Configuration
+PORT=4000
+NODE_ENV=development
+
+# Security
+DEBUG_DB=false
