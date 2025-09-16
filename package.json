@@ -1,0 +1,17 @@
+{
+  "name": "maseno-counseling-bot-v2",
+  "version": "1.0.0",
+  "description": "Maseno University Counseling Bot with Dashboard - Version 2",
+  "scripts": {
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd dashboard && npm run dev\"",
+    "build": "cd dashboard && npm run build",
+    "start": "cd backend && npm start",
+    "setup": "cd backend && npm install && cd ../dashboard && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": ["counseling", "bot", "dashboard", "maseno", "v2"],
+  "author": "Maseno University",
+  "license": "MIT"
+}
