@@ -6,7 +6,7 @@
       "use": "@vercel/node"
     },
     {
-      "src": "dashboard/index.html",
+      "src": "dashboard/package.json",
       "use": "@vercel/static-build",
       "config": { "distDir": "dashboard/dist" }
     }
@@ -20,8 +20,5 @@
       "src": "/(.*)",
       "dest": "dashboard/index.html"
     }
-  ],
-  "installCommand": "cd dashboard && npm install --include=dev && cd ../backend && npm install",
-  "buildCommand": "cd dashboard && npm run build",
-  "outputDirectory": "dashboard/dist"
+  ]
 }
