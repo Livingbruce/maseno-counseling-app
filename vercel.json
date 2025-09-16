@@ -1,4 +1,27 @@
 {
-  "buildCommand": "cd dashboard && npm install && npm run build",
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/src/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "dashboard/index.html",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dashboard/dist" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/src/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "dashboard/index.html"
+    }
+  ],
+  "installCommand": "npm install --prefix backend && npm install --prefix dashboard",
+  "buildCommand": "npm run build --prefix dashboard",
   "outputDirectory": "dashboard/dist"
 }
