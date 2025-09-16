@@ -21,7 +21,7 @@
       "dest": "dashboard/index.html"
     }
   ],
-  "installCommand": "npm install --prefix backend && npm install --prefix dashboard",
-  "buildCommand": "npm run build --prefix dashboard",
+  "installCommand": "cd dashboard && npm install --include=dev && cd ../backend && npm install",
+  "buildCommand": "cd dashboard && npm run build",
   "outputDirectory": "dashboard/dist"
 }
