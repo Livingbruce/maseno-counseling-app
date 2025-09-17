@@ -9,14 +9,20 @@
     "setup": "cd backend && npm install && cd ../dashboard && npm install"
   },
   "dependencies": {
-    "express": "^4.18.2",
     "cors": "^2.8.5",
-    "helmet": "^7.1.0"
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "serverless-http": "^4.0.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
-  "keywords": ["counseling", "bot", "dashboard", "maseno"],
+  "keywords": [
+    "counseling",
+    "bot",
+    "dashboard",
+    "maseno"
+  ],
   "author": "Maseno University",
   "license": "MIT"
 }

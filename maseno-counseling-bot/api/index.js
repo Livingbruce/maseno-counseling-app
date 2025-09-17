@@ -1,5 +1,6 @@
-// Express app for Vercel
+// Express app wrapped with serverless-http for Vercel
 const express = require('express');
+const serverless = require('serverless-http');
 const cors = require('cors');
 const helmet = require('helmet');
 
@@ -53,5 +54,5 @@ app.get('/api/', (req, res) => {
   });
 });
 
-// Export for Vercel
-module.exports = app;
+// Wrap Express app with serverless-http for Vercel
+module.exports = serverless(app);
