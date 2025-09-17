@@ -6,9 +6,9 @@
       "use": "@vercel/node"
     },
     {
-      "src": "dashboard/package.json",
+      "src": "maseno-counseling-bot-v2/dashboard/package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "dashboard/dist" }
+      "config": { "distDir": "maseno-counseling-bot-v2/dashboard/dist" }
     }
   ],
   "routes": [
@@ -18,7 +18,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "dashboard/index.html"
+      "dest": "maseno-counseling-bot-v2/dashboard/index.html"
     }
   ]
 }
