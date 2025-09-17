@@ -8,6 +8,11 @@
     "start": "cd backend && npm start",
     "setup": "cd backend && npm install && cd ../dashboard && npm install"
   },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0"
+  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   },

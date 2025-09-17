@@ -1,11 +1,7 @@
 // Vercel API handler
-import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import dotenv from "dotenv";
-
-// Load environment variables
-dotenv.config();
+const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
 
 const app = express();
 
@@ -48,4 +44,4 @@ app.get("/api/*", (req, res) => {
 });
 
 // Export for Vercel
-export default app;
+module.exports = app;
