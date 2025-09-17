@@ -8,7 +8,7 @@
     {
       "src": "maseno-counseling-bot-v2/dashboard/package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "maseno-counseling-bot-v2/dashboard/dist" }
+      "outputDirectory": "maseno-counseling-bot-v2/dashboard/dist"
     }
   ],
   "routes": [
@@ -20,5 +20,10 @@
       "src": "/(.*)",
       "dest": "maseno-counseling-bot-v2/dashboard/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "backend/src/index.js": {
+      "maxDuration": 30
+    }
+  }
 }
