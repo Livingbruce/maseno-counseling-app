@@ -1,36 +1,61 @@
 # Maseno Counseling Bot
 
-A comprehensive counseling bot system for Maseno University featuring:
-- Student-friendly Telegram bot interface
-- Counselor management dashboard
-- Real-time appointment booking
-- Support ticket system
-- Announcement broadcasting
-- Secure authentication and data protection
+A comprehensive counseling management system for Maseno University with a Telegram bot and web dashboard.
+
+## Project Structure
+
+```
+maseno-counseling-bot/
+├── backend/                 # Node.js/Express API server
+│   ├── src/
+│   │   ├── bot.js          # Telegram bot logic
+│   │   ├── index.js        # Express server
+│   │   ├── controllers/    # API controllers
+│   │   ├── routes/         # API routes
+│   │   ├── middleware/     # Security & auth middleware
+│   │   └── utils/          # Utility functions
+│   └── seed/               # Database setup scripts
+├── dashboard/              # React frontend
+│   ├── src/
+│   │   ├── components/     # Reusable components
+│   │   ├── pages/          # Page components
+│   │   └── styles/         # CSS files
+│   └── index.html          # Main HTML file
+└── README.md
+```
 
 ## Features
 
-- **Telegram Bot**: Students can book appointments, get support, and receive announcements
-- **Counselor Dashboard**: React-based dashboard for counselors to manage appointments and students
-- **Database Integration**: PostgreSQL database for secure data storage
-- **Security Features**: Rate limiting, input validation, and secure authentication
-- **Real-time Updates**: Live notifications and status updates
+- **Telegram Bot**: Student counseling and appointment booking
+- **Web Dashboard**: Counselor management interface
+- **Appointment System**: Schedule and manage counseling sessions
+- **Support Tickets**: Student support system
+- **Announcements**: Force announcements to all users
+- **Security**: Comprehensive security measures
 
-## Technology Stack
+## Quick Start
 
-- **Backend**: Node.js, Express.js, PostgreSQL
-- **Frontend**: React, Vite
-- **Bot**: Telegraf.js
-- **Database**: PostgreSQL
-- **Deployment**: Vercel
+1. **Backend Setup:**
+   ```bash
+   cd backend
+   npm install
+   cp env-template .env
+   # Configure .env with your database and bot token
+   npm run init-db
+   npm start
+   ```
 
-## Getting Started
+2. **Dashboard Setup:**
+   ```bash
+   cd dashboard
+   npm install
+   npm run dev
+   ```
 
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Set up environment variables
-4. Run the development server: `npm run dev`
+## Environment Variables
 
-## License
+Create `.env` files in both `backend/` and `dashboard/` directories with the required configuration.
 
-This project is licensed under the MIT License.
+## Database
+
+PostgreSQL database with comprehensive schema for users, appointments, tickets, and more.
