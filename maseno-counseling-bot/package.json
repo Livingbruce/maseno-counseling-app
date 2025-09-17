@@ -2,6 +2,7 @@
   "name": "maseno-counseling-bot",
   "version": "1.0.0",
   "description": "Maseno University Counseling Bot with Dashboard",
+  "type": "module",
   "scripts": {
     "dev": "concurrently \"cd backend && npm run dev\" \"cd dashboard && npm run dev\"",
     "build": "cd dashboard && npm run build",
