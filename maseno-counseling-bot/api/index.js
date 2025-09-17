@@ -1,97 +1,77 @@
-// Express app wrapped with serverless-http for Vercel
-const express = require('express');
-const serverless = require('serverless-http');
-const cors = require('cors');
-const helmet = require('helmet');
+// Simple Vercel serverless function handler
+export default function handler(req, res) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
 
-const app = express();
-
-// Middleware
-app.use(helmet());
-app.use(cors());
-app.use(express.json());
-
-// Health route (with and without /api prefix)
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok',
-    message: 'Maseno Counseling Bot API is running!',
-    timestamp: new Date().toISOString()
-  });
-});
-
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'ok',
-    message: 'Maseno Counseling Bot API is running!',
-    timestamp: new Date().toISOString()
-  });
-});
-
-// Test route (with and without /api prefix)
-app.get('/api/test', (req, res) => {
-  res.json({ 
-    message: 'test works',
-    data: {
-      service: 'Maseno Counseling Bot',
-      version: '1.0.0',
-      timestamp: new Date().toISOString()
-    }
-  });
-});
-
-app.get('/test', (req, res) => {
-  res.json({ 
-    message: 'test works',
-    data: {
-      service: 'Maseno Counseling Bot',
-      version: '1.0.0',
-      timestamp: new Date().toISOString()
-    }
-  });
-});
-
-// Hello route (with and without /api prefix)
-app.get('/api/hello', (req, res) => {
-  res.json({ 
-    message: 'Hello from Vercel!',
-    timestamp: new Date().toISOString()
-  });
-});
-
-app.get('/hello', (req, res) => {
-  res.json({ 
-    message: 'Hello from Vercel!',
-    timestamp: new Date().toISOString()
-  });
-});
-
-// Main API route (with and without /api prefix)
-app.get('/api/', (req, res) => {
-  res.json({
-    message: "Maseno Counseling Bot API",
-    status: "OK",
-    availableEndpoints: [
-      "/api/health",
-      "/api/test",
-      "/api/hello"
-    ],
-    timestamp: new Date().toISOString()
-  });
-});
-
-app.get('/', (req, res) => {
-  res.json({
-    message: "Maseno Counseling Bot API",
-    status: "OK",
-    availableEndpoints: [
-      "/api/health",
-      "/api/test",
-      "/api/hello"
-    ],
-    timestamp: new Date().toISOString()
-  });
-});
-
-// Wrap Express app with serverless-http for Vercel
-module.exports = serverless(app);
+  const { pathname } = new URL(req.url, `http://${req.headers.host}`);
+  
+  // Route handling
+  switch (pathname) {
+    case '/api/health':
+    case '/health':
+      res.status(200).json({
+        status: 'ok',
+        message: 'Maseno Counseling Bot API is running!',
+        timestamp: new Date().toISOString(),
+        method: req.method,
+        url: req.url
+      });
+      break;
+      
+    case '/api/test':
+    case '/test':
+      res.status(200).json({
+        message: 'test works',
+        data: {
+          service: 'Maseno Counseling Bot',
+          version: '1.0.0',
+          timestamp: new Date().toISOString()
+        },
+        method: req.method,
+        url: req.url
+      });
+      break;
+      
+    case '/api/hello':
+    case '/hello':
+      res.status(200).json({
+        message: 'Hello from Vercel!',
+        timestamp: new Date().toISOString(),
+        method: req.method,
+        url: req.url
+      });
+      break;
+      
+    case '/api/':
+    case '/':
+      res.status(200).json({
+        message: "Maseno Counseling Bot API",
+        status: "OK",
+        availableEndpoints: [
+          "/api/health",
+          "/api/test",
+          "/api/hello"
+        ],
+        timestamp: new Date().toISOString(),
+        method: req.method,
+        url: req.url
+      });
+      break;
+      
+    default:
+      res.status(404).json({
+        error: 'Route not found',
+        path: pathname,
+        method: req.method,
+        url: req.url
+      });
+  }
+}
