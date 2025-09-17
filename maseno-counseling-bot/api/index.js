@@ -11,7 +11,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-// Health route
+// Health route (with and without /api prefix)
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok',
@@ -20,7 +20,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Test route
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok',
+    message: 'Maseno Counseling Bot API is running!',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Test route (with and without /api prefix)
 app.get('/api/test', (req, res) => {
   res.json({ 
     message: 'test works',
@@ -32,7 +40,18 @@ app.get('/api/test', (req, res) => {
   });
 });
 
-// Hello route
+app.get('/test', (req, res) => {
+  res.json({ 
+    message: 'test works',
+    data: {
+      service: 'Maseno Counseling Bot',
+      version: '1.0.0',
+      timestamp: new Date().toISOString()
+    }
+  });
+});
+
+// Hello route (with and without /api prefix)
 app.get('/api/hello', (req, res) => {
   res.json({ 
     message: 'Hello from Vercel!',
@@ -40,8 +59,28 @@ app.get('/api/hello', (req, res) => {
   });
 });
 
-// Main API route
+app.get('/hello', (req, res) => {
+  res.json({ 
+    message: 'Hello from Vercel!',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Main API route (with and without /api prefix)
 app.get('/api/', (req, res) => {
+  res.json({
+    message: "Maseno Counseling Bot API",
+    status: "OK",
+    availableEndpoints: [
+      "/api/health",
+      "/api/test",
+      "/api/hello"
+    ],
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/', (req, res) => {
   res.json({
     message: "Maseno Counseling Bot API",
     status: "OK",
