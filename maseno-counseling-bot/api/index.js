@@ -1,23 +1,47 @@
-// Main API endpoint serverless function
-export default function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
+// Express app for Vercel
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
 
-  // Only allow GET requests
-  if (req.method !== 'GET') {
-    res.status(405).json({ error: 'Method not allowed' });
-    return;
-  }
+const app = express();
 
-  res.status(200).json({
+// Middleware
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
+
+// Health route
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok',
+    message: 'Maseno Counseling Bot API is running!',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Test route
+app.get('/api/test', (req, res) => {
+  res.json({ 
+    message: 'test works',
+    data: {
+      service: 'Maseno Counseling Bot',
+      version: '1.0.0',
+      timestamp: new Date().toISOString()
+    }
+  });
+});
+
+// Hello route
+app.get('/api/hello', (req, res) => {
+  res.json({ 
+    message: 'Hello from Vercel!',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Main API route
+app.get('/api/', (req, res) => {
+  res.json({
     message: "Maseno Counseling Bot API",
     status: "OK",
     availableEndpoints: [
@@ -25,8 +49,9 @@ export default function handler(req, res) {
       "/api/test",
       "/api/hello"
     ],
-    timestamp: new Date().toISOString(),
-    service: "Maseno Counseling Bot",
-    version: "1.0.0"
+    timestamp: new Date().toISOString()
   });
-}
+});
+
+// Export for Vercel
+module.exports = app;
