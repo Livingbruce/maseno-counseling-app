@@ -1,5 +1,5 @@
 // Individual health endpoint
-export default function handler(req, res) {
+module.exports = (req, res) => {
   res.status(200).json({
     status: 'ok',
     message: 'Maseno Counseling Bot API is running!',
@@ -7,4 +7,4 @@ export default function handler(req, res) {
     method: req.method,
     url: req.url
   });
-}
+};

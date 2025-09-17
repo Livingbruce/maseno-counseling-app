@@ -1,5 +1,5 @@
 // Individual test endpoint
-export default function handler(req, res) {
+module.exports = (req, res) => {
   res.status(200).json({
     message: 'test works',
     data: {
@@ -10,4 +10,4 @@ export default function handler(req, res) {
     method: req.method,
     url: req.url
   });
-}
+};
