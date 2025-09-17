@@ -15,20 +15,15 @@ module.exports = (req, res) => {
   const { pathname } = new URL(req.url, `http://${req.headers.host}`);
   
   // Route handling
-  if (pathname === '/api/health') {
+  if (pathname === '/api/' || pathname === '/api') {
     res.status(200).json({
+      message: "Maseno Counseling Bot API",
       status: "OK",
-      message: "Maseno Counseling Bot API is running!",
+      availableEndpoints: [
+        "/api/health",
+        "/api/test"
+      ],
       timestamp: new Date().toISOString()
-    });
-  } else if (pathname === '/api/test') {
-    res.status(200).json({
-      message: "API is working!",
-      data: {
-        service: "Maseno Counseling Bot",
-        version: "1.0.0",
-        environment: process.env.NODE_ENV || "development"
-      }
     });
   } else if (pathname.startsWith('/api/')) {
     res.status(404).json({
