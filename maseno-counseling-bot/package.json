@@ -1,14 +1,15 @@
 {
-  "name": "maseno-counseling-bot",
+  "name": "maseno-counseling-fresh",
   "version": "1.0.0",
   "description": "Maseno Counseling Bot - Complete Authentication Solution",
   "main": "api/index.js",
   "scripts": {
-    "build": "cd dashboard && npm run build",
-    "start": "node api/index.js",
-    "dev": "concurrently \"npm run dev:api\" \"npm run dev:dashboard\"",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:frontend\"",
     "dev:api": "node api/index.js",
-    "dev:dashboard": "cd dashboard && npm run dev"
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "node api/index.js",
+    "test": "node test/complete-test.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -22,5 +23,8 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "keywords": ["counseling", "maseno", "authentication", "api"],
+  "author": "Maseno University",
+  "license": "MIT"
 }
