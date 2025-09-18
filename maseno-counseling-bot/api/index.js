@@ -233,6 +233,16 @@ async function handleRequest(req, res) {
       });
       break;
       
+    case '/api/deployment-test':
+      res.status(200).json({
+        message: 'Deployment test successful!',
+        timestamp: new Date().toISOString(),
+        version: '3.0.0',
+        status: 'ACTIVE',
+        loginEnabled: true
+      });
+      break;
+      
     case '/api/auth/login':
       if (req.method !== 'POST') {
         res.status(405).json({ error: 'Method not allowed' });
@@ -339,8 +349,9 @@ async function handleRequest(req, res) {
           "/api/auth/login",
           "/api/auth/me"
         ],
-        version: "2.0.0",
-        lastUpdated: "2025-09-18T10:40:00Z",
+        version: "3.0.0",
+        lastUpdated: "2025-09-18T11:45:00Z",
+        deploymentStatus: "ACTIVE",
         timestamp: new Date().toISOString(),
         method: req.method,
         url: req.url
