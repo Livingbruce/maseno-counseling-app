@@ -349,7 +349,7 @@ async function handleRequest(req, res) {
           "/api/auth/login",
           "/api/auth/me"
         ],
-        version: "4.0.0",
+        version: "4.1.0",
         lastUpdated: "2025-09-18T12:01:00Z",
         deploymentStatus: "FORCE_DEPLOYED",
         buildId: "force-deploy-" + Date.now(),
