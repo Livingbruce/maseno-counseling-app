@@ -349,9 +349,10 @@ async function handleRequest(req, res) {
           "/api/auth/login",
           "/api/auth/me"
         ],
-        version: "3.0.0",
-        lastUpdated: "2025-09-18T11:45:00Z",
-        deploymentStatus: "ACTIVE",
+        version: "4.0.0",
+        lastUpdated: "2025-09-18T12:01:00Z",
+        deploymentStatus: "FORCE_DEPLOYED",
+        buildId: "force-deploy-" + Date.now(),
         timestamp: new Date().toISOString(),
         method: req.method,
         url: req.url

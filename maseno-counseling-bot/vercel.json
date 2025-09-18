@@ -8,6 +8,9 @@
     }
   ],
   "functions": {
+    "api/login-working.js": {
+      "maxDuration": 10
+    },
     "api/auth/login.js": {
       "maxDuration": 10
     },
