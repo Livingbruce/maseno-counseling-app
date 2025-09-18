@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://maseno-counseling-bot.vercel.app",
+      "permanent": true
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "https://maseno-counseling-bot.vercel.app/api/$1",
+      "permanent": true
+    }
+  ]
+}
