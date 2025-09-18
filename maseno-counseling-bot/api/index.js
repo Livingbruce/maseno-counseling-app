@@ -223,6 +223,16 @@ async function handleRequest(req, res) {
       });
       break;
       
+    case '/api/env-test':
+      res.status(200).json({
+        message: 'Environment variables test',
+        timestamp: new Date().toISOString(),
+        hasDatabaseUrl: !!process.env.DATABASE_URL,
+        hasJwtSecret: !!process.env.JWT_SECRET,
+        nodeEnv: process.env.NODE_ENV || 'not set'
+      });
+      break;
+      
     case '/api/auth/login':
       if (req.method !== 'POST') {
         res.status(405).json({ error: 'Method not allowed' });
