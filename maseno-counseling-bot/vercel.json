@@ -12,6 +12,12 @@
     }
   ],
   "functions": {
+    "api/test-simple.js": {
+      "maxDuration": 10
+    },
+    "api/login-simple.js": {
+      "maxDuration": 10
+    },
     "api/login-working.js": {
       "maxDuration": 10
     },
