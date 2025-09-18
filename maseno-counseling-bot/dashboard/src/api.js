@@ -36,10 +36,10 @@ export default API;
 
 // Auth API calls
 export const login = (email, password) => 
-  API.post("/api/login-working", { email, password });
+  API.post("/api/login-simple", { email, password });
 
 export const getMe = () => 
-  API.get("/api/hello");
+  API.get("/api/test-simple");
 
 // Dashboard API calls
 export const getDashboardStats = () => 

@@ -1,6 +1,8 @@
 {
   "version": 2,
-  "public": true,
+  "buildCommand": "cd dashboard && npm run build",
+  "outputDirectory": "dashboard/dist",
+  "installCommand": "npm install && cd dashboard && npm install",
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -8,23 +10,20 @@
     },
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/dashboard/dist/index.html"
     }
   ],
   "functions": {
+    "api/index.js": {
+      "runtime": "nodejs18.x",
+      "maxDuration": 10
+    },
     "api/test-simple.js": {
+      "runtime": "nodejs18.x",
       "maxDuration": 10
     },
     "api/login-simple.js": {
-      "maxDuration": 10
-    },
-    "api/login-working.js": {
-      "maxDuration": 10
-    },
-    "api/auth/login.js": {
-      "maxDuration": 10
-    },
-    "api/auth/me.js": {
+      "runtime": "nodejs18.x",
       "maxDuration": 10
     }
   }
