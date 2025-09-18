@@ -36,48 +36,48 @@ export default API;
 
 // Auth API calls
 export const login = (email, password) => 
-  API.post("/auth/login", { email, password });
+  API.post("/api/login-test", { email, password });
 
 export const getMe = () => 
-  API.get("/auth/me");
+  API.get("/api/hello");
 
 // Dashboard API calls
 export const getDashboardStats = () => 
-  API.get("/dashboard/stats");
+  API.get("/api/dashboard/stats");
 
 export const getRecentAppointments = (counselorId) =>
-  API.get(`/appointments/counselor/${counselorId}?limit=5&sort=desc`);
+  API.get(`/api/appointments/counselor/${counselorId}?limit=5&sort=desc`);
 
 export const getRecentAnnouncements = () =>
-  API.get("/announcements?limit=3&sort=desc");
+  API.get("/api/announcements?limit=3&sort=desc");
 
 export const getUpcomingActivities = () =>
-  API.get("/activities?limit=3&sort=asc&upcoming=true");
+  API.get("/api/activities?limit=3&sort=asc&upcoming=true");
 
 // Appointments
 export const getAppointments = (counselorId) =>
-  API.get(`/appointments/counselor/${counselorId}`);
+  API.get(`/api/appointments/counselor/${counselorId}`);
 export const createAppointment = (data) =>
-  API.post("/appointments", data);
+  API.post("/api/appointments", data);
 export const updateAppointment = (id, status) =>
-  API.patch(`/appointments/${id}/status`, { status });
+  API.patch(`/api/appointments/${id}/status`, { status });
 export const cancelAppointment = (id) =>
-  API.delete(`/appointments/${id}`);
+  API.delete(`/api/appointments/${id}`);
 
 // Announcements
 export const postAnnouncement = (data) =>
-  API.post("/announcements", data);
+  API.post("/api/announcements", data);
 export const getAnnouncements = () =>
-  API.get("/announcements");
+  API.get("/api/announcements");
 
 // Activities
 export const postActivity = (data) =>
-  API.post("/activities", data);
+  API.post("/api/activities", data);
 export const getActivities = () =>
-  API.get("/activities");
+  API.get("/api/activities");
 
 // Books
 export const getBooks = () =>
-  API.get("/books");
+  API.get("/api/books");
 export const postBook = (data) =>
-  API.post("/books", data);
+  API.post("/api/books", data);
