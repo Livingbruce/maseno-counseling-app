@@ -134,6 +134,26 @@ async function handleRequest(req, res) {
         try {
           const { email, password } = req.body;
           
+          // Check if database is available
+          if (!process.env.DATABASE_URL) {
+            console.error('DATABASE_URL not found in environment variables');
+            res.status(500).json({ 
+              error: 'Database configuration missing',
+              details: 'DATABASE_URL environment variable is not set on Vercel'
+            });
+            return;
+          }
+          
+          // Check if JWT secret is available
+          if (!process.env.JWT_SECRET) {
+            console.error('JWT_SECRET not found in environment variables');
+            res.status(500).json({ 
+              error: 'JWT configuration missing',
+              details: 'JWT_SECRET environment variable is not set on Vercel'
+            });
+            return;
+          }
+          
           // Get user from database
           const userResult = await pool.query(
             'SELECT id, name, email, password_hash, is_admin FROM counselors WHERE email = $1',
@@ -162,7 +182,7 @@ async function handleRequest(req, res) {
               email: user.email, 
               is_admin: user.is_admin 
             },
-            process.env.JWT_SECRET || 'fallback-secret',
+            process.env.JWT_SECRET,
             { expiresIn: '24h' }
           );
           
@@ -179,7 +199,10 @@ async function handleRequest(req, res) {
           return;
         } catch (error) {
           console.error('Login error:', error);
-          res.status(500).json({ error: 'Internal server error' });
+          res.status(500).json({ 
+            error: 'Internal server error',
+            details: error.message
+          });
           return;
         }
       }
