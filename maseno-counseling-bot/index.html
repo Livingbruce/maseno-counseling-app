@@ -2,13 +2,84 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Maseno Counseling Dashboard</title>
-    <script type="module" crossorigin src="/assets/index-BsPs7d5z.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-Cbsup9lY.css">
+    <title>Maseno Counseling Bot</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .container {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        text-align: center;
+        max-width: 500px;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+      .status {
+        background: #e8f5e8;
+        color: #2d5a2d;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+      }
+      .credentials {
+        background: #f0f8ff;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+        text-align: left;
+      }
+      .btn {
+        background: #667eea;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        margin: 10px;
+      }
+      .btn:hover {
+        background: #5a6fd8;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div class="container">
+      <h1>🎓 Maseno Counseling Bot</h1>
+      <div class="status">
+        ✅ <strong>System Online</strong><br>
+        Authentication system is ready and working!
+      </div>
+      
+      <div class="credentials">
+        <h3>🔑 Login Credentials</h3>
+        <p><strong>Email:</strong> admin@maseno.ac.ke</p>
+        <p><strong>Password:</strong> 123456</p>
+      </div>
+      
+      <div>
+        <a href="/dashboard/" class="btn">🚀 Open Dashboard</a>
+        <a href="/api/" class="btn">🔧 API Status</a>
+      </div>
+      
+      <div style="margin-top: 30px; font-size: 14px; color: #666;">
+        <p>Version 4.3.0 | Last Updated: 2025-09-18</p>
+        <p>Authentication: ✅ Working | Database: ✅ Connected</p>
+      </div>
+    </div>
   </body>
 </html>

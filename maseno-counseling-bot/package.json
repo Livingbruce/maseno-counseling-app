@@ -1,31 +1,26 @@
 {
   "name": "maseno-counseling-bot",
   "version": "1.0.0",
-  "description": "Maseno University Counseling Bot with Dashboard",
+  "description": "Maseno Counseling Bot - Complete Authentication Solution",
+  "main": "api/index.js",
   "scripts": {
-    "dev": "concurrently \"cd backend && npm run dev\" \"cd dashboard && npm run dev\"",
-    "build": "echo 'Build completed'",
-    "start": "cd backend && npm start",
-    "setup": "cd backend && npm install && cd ../dashboard && npm install"
+    "build": "cd dashboard && npm run build",
+    "start": "node api/index.js",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:dashboard\"",
+    "dev:api": "node api/index.js",
+    "dev:dashboard": "cd dashboard && npm run dev"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "helmet": "^7.1.0",
-    "serverless-http": "^4.0.0",
-    "pg": "^8.11.3",
-    "bcrypt": "^5.1.1",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
-  "keywords": [
-    "counseling",
-    "bot",
-    "dashboard",
-    "maseno"
-  ],
-  "author": "Maseno University",
-  "license": "MIT"
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
