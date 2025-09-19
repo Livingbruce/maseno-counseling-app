@@ -3,19 +3,24 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
+const path = require('path');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Database connection
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_mxctpnL51sTU@ep-withered-shape-abox0wby-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require',
-  ssl: { rejectUnauthorized: false }
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the React app build directory
+app.use(express.static(path.join(__dirname, 'frontend/dist')));
 
 // API Routes
 app.get('/api/', (req, res) => {
@@ -25,7 +30,8 @@ app.get('/api/', (req, res) => {
     version: "1.0.0",
     timestamp: new Date().toISOString(),
     authentication: "READY",
-    database: process.env.DATABASE_URL ? "CONNECTED" : "NOT_CONFIGURED"
+    database: process.env.DATABASE_URL ? "CONNECTED" : "NOT_CONFIGURED",
+    jwt: process.env.JWT_SECRET ? "CONFIGURED" : "NOT_CONFIGURED"
   });
 });
 
@@ -46,6 +52,21 @@ app.post('/api/login', async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
+    // Check environment variables
+    if (!process.env.DATABASE_URL) {
+      return res.status(500).json({
+        error: 'Database configuration missing',
+        details: 'DATABASE_URL not set'
+      });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({
+        error: 'JWT configuration missing',
+        details: 'JWT_SECRET not set'
+      });
+    }
+
     // For demo purposes, use mock authentication
     if (email === 'admin@maseno.ac.ke' && password === '123456') {
       const mockUser = {
@@ -57,7 +78,7 @@ app.post('/api/login', async (req, res) => {
 
       const token = jwt.sign(
         { id: mockUser.id, email: mockUser.email },
-        process.env.JWT_SECRET || 'maseno-counseling-super-secret-jwt-key-2025',
+        process.env.JWT_SECRET,
         { expiresIn: '24h' }
       );
 
@@ -90,7 +111,7 @@ app.get('/api/me', async (req, res) => {
 
     try {
       // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'maseno-counseling-super-secret-jwt-key-2025');
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       
       // For demo purposes, return mock user data
       const mockUser = {
@@ -117,8 +138,13 @@ app.get('/api/me', async (req, res) => {
   }
 });
 
+// Catch all handler: send back React's index.html file for any non-API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/dist/index.html'));
+});
+
 app.listen(PORT, () => {
-  console.log(`API Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Database: ${process.env.DATABASE_URL ? 'Connected' : 'Not configured'}`);
 });

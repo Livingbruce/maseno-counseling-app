@@ -1,4 +1,5 @@
 // Maseno Counseling Bot API - Complete Authentication Solution
+// Version 1.0.3 - Fixed API response format
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
@@ -30,7 +31,7 @@ module.exports = async (req, res) => {
         res.status(200).json({
           message: "Maseno Counseling Bot API",
           status: "ONLINE",
-          version: "1.0.0",
+          version: "1.0.3",
           timestamp: new Date().toISOString(),
           authentication: "READY",
           database: process.env.DATABASE_URL ? "CONNECTED" : "NOT_CONFIGURED",
@@ -50,7 +51,7 @@ module.exports = async (req, res) => {
           message: 'Health check successful',
           status: 'OK',
           timestamp: new Date().toISOString(),
-          version: '1.0.0'
+          version: '1.0.3'
         });
         break;
 
@@ -60,7 +61,7 @@ module.exports = async (req, res) => {
           timestamp: new Date().toISOString(),
           method: req.method,
           url: req.url,
-          version: '1.0.0'
+          version: '1.0.3'
         });
         break;
 
@@ -127,12 +128,14 @@ module.exports = async (req, res) => {
 
               res.status(200).json({
                 message: 'Login successful',
-                token,
-                user: {
-                  id: user.id,
-                  name: user.name,
-                  email: user.email,
-                  is_admin: user.is_admin
+                data: {
+                  token,
+                  user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    is_admin: user.is_admin
+                  }
                 }
               });
 
@@ -179,11 +182,13 @@ module.exports = async (req, res) => {
 
             res.status(200).json({
               message: 'User data retrieved',
-              user: {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                is_admin: user.is_admin
+              data: {
+                user: {
+                  id: user.id,
+                  name: user.name,
+                  email: user.email,
+                  is_admin: user.is_admin
+                }
               }
             });
 
@@ -208,7 +213,8 @@ module.exports = async (req, res) => {
     console.error('API Error:', error);
     res.status(500).json({
       error: 'Internal server error',
-      details: error.message
+      details: error.message,
+      timestamp: new Date().toISOString()
     });
   }
 };

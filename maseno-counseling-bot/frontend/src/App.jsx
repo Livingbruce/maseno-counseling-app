@@ -4,6 +4,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import { AuthProvider, useAuth } from './utils/AuthContext'
 import './styles/App.css'
+import './force-new-build.js'
 
 function App() {
   return (
