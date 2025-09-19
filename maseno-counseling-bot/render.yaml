@@ -1,25 +1,17 @@
 services:
-  # Backend API Service
   - type: web
-    name: maseno-counseling-api
+    name: maseno-counseling-bot
     env: node
-    plan: free
-    buildCommand: npm install && npm run build
+    buildCommand: npm install
     startCommand: npm start
     envVars:
+      - key: BOT_TOKEN
+        value: 8423141480:AAGaUCF3EI9Y2lYooVwp-w8kNQyEudl7pHQ
+      - key: DATABASE_URL
+        value: postgresql://neondb_owner:npg_mxctpnL51sTU@ep-withered-shape-abox0wby-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      - key: JWT_SECRET
+        value: maseno-counseling-bot-secret-key-2024
       - key: NODE_ENV
         value: production
-      - key: JWT_SECRET
-        generateValue: true
-      - key: DATABASE_URL
-        fromDatabase:
-          name: maseno-counseling-db
-          property: connectionString
-
-  # PostgreSQL Database
-  - type: pserv
-    name: maseno-counseling-db
-    env: postgresql
-    plan: free
-    databaseName: maseno_counseling
-    databaseUser: maseno_user
+      - key: PORT
+        value: 3001

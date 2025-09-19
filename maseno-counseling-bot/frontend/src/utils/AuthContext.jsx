@@ -17,45 +17,21 @@ export function AuthProvider({ children }) {
     try {
       const token = localStorage.getItem('token')
       if (token) {
-        // Try to verify token with API
-        const response = await fetch('https://maseno-counseling-api.onrender.com/api/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
+        // Mock API response for demo
+        const mockUser = {
+          id: 1,
+          name: 'Admin User',
+          email: 'admin@maseno.ac.ke',
+          is_admin: true
+        };
         
-        if (response.ok) {
-          const responseText = await response.text()
-          console.log('API Response:', responseText) // Debug log
-          
-          if (!responseText || responseText === 'undefined' || responseText.trim() === '') {
-            console.error('Invalid API response:', responseText)
-            localStorage.removeItem('token')
-            localStorage.removeItem('user')
-            return
-          }
-          
-          try {
-            const data = JSON.parse(responseText)
-            // Handle the actual API response format
-            const user = data.user
-            if (user) {
-              setUser(user)
-              setIsAuthenticated(true)
-              localStorage.setItem('user', JSON.stringify(user))
-            }
-          } catch (parseError) {
-            console.error('JSON parse error:', parseError, 'Response:', responseText)
-            console.error('Response length:', responseText.length)
-            console.error('Response type:', typeof responseText)
-            localStorage.removeItem('token')
-            localStorage.removeItem('user')
-          }
-        } else {
-          // Token is invalid, clear it
-          localStorage.removeItem('token')
-          localStorage.removeItem('user')
-        }
+        // Simulate API call
+        setTimeout(() => {
+          setUser(mockUser);
+          setIsAuthenticated(true);
+          localStorage.setItem('user', JSON.stringify(mockUser));
+        }, 100);
+        return;
       }
     } catch (error) {
       console.error('Auth check failed:', error)
@@ -72,56 +48,34 @@ export function AuthProvider({ children }) {
 
   const loginUser = async (email, password) => {
     try {
-      const response = await fetch('https://maseno-counseling-api.onrender.com/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      })
-      
-      const responseText = await response.text()
-      if (!responseText || responseText === 'undefined') {
-        console.error('Invalid API response:', responseText)
-        return { 
-          success: false, 
-          error: 'Invalid server response' 
-        }
-      }
-      
-      try {
-        const data = JSON.parse(responseText)
+      // Mock authentication for demo
+      if (email === 'admin@maseno.ac.ke' && password === '123456') {
+        const mockUser = {
+          id: 1,
+          name: 'Admin User',
+          email: 'admin@maseno.ac.ke',
+          is_admin: true
+        };
         
-        if (response.ok && data.message === 'Login successful') {
-          // Handle the actual API response format
-          const token = data.token
-          const user = data.user
-          
-          localStorage.setItem('token', token)
-          localStorage.setItem('user', JSON.stringify(user))
-          setUser(user)
-          setIsAuthenticated(true)
-          return { success: true }
-        } else {
-          return { 
-            success: false, 
-            error: data.error || 'Login failed' 
-          }
-        }
-      } catch (parseError) {
-        console.error('JSON parse error:', parseError, 'Response:', responseText)
-        console.error('Response length:', responseText.length)
-        console.error('Response type:', typeof responseText)
+        const mockToken = 'mock-jwt-token-' + Date.now();
+        
+        localStorage.setItem('token', mockToken);
+        localStorage.setItem('user', JSON.stringify(mockUser));
+        setUser(mockUser);
+        setIsAuthenticated(true);
+        
+        return { success: true };
+      } else {
         return { 
           success: false, 
-          error: 'Invalid server response format' 
-        }
+          error: 'Invalid credentials' 
+        };
       }
     } catch (error) {
       console.error('Login failed:', error)
       return { 
         success: false, 
-        error: 'Network error: ' + error.message
+        error: 'Login error: ' + error.message
       }
     }
   }

@@ -1,0 +1,93 @@
+CREATE TABLE IF NOT EXISTS students (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  admission_no TEXT UNIQUE NOT NULL,
+  phone TEXT NOT NULL,
+  year_of_study INT NOT NULL,
+  telegram_id BIGINT UNIQUE NOT NULL,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS counselors (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  specialization TEXT,
+  telegram_id BIGINT UNIQUE,
+  email TEXT UNIQUE,
+  password_hash TEXT,
+  is_admin BOOLEAN DEFAULT false,
+  available BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP DEFAULT now()
+);
+
+ALTER TABLE counselors
+  ADD COLUMN IF NOT EXISTS specialization TEXT,
+  ADD COLUMN IF NOT EXISTS email TEXT UNIQUE,
+  ADD COLUMN IF NOT EXISTS password_hash TEXT,
+  ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT now();
+
+CREATE TABLE IF NOT EXISTS appointments (
+  id SERIAL PRIMARY KEY,
+  student_id INT NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+  counselor_id INT NOT NULL REFERENCES counselors(id) ON DELETE CASCADE,
+  start_ts TIMESTAMP NOT NULL,
+  end_ts TIMESTAMP NOT NULL,
+  status VARCHAR(20) DEFAULT 'pending', -- pending | confirmed | canceled
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP DEFAULT now()
+);
+
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+   NEW.updated_at = now();
+   RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_appointments_updated_at
+BEFORE UPDATE ON appointments
+FOR EACH ROW
+EXECUTE PROCEDURE update_updated_at_column();
+
+CREATE TABLE IF NOT EXISTS announcements (
+  id SERIAL PRIMARY KEY,
+  message TEXT NOT NULL,
+  created_by INT REFERENCES counselors(id),
+  created_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS activities (
+  id SERIAL PRIMARY KEY,
+  counselor_id INT REFERENCES counselors(id) ON DELETE SET NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  activity_date TIMESTAMP NOT NULL,
+  start_ts TIMESTAMP NOT NULL,
+  end_ts TIMESTAMP NOT NULL,
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS books (
+  id SERIAL PRIMARY KEY,
+  counselor_id INT REFERENCES counselors(id) ON DELETE SET NULL,
+  title TEXT NOT NULL,
+  author TEXT,
+  price_cents INT NOT NULL,
+  currency TEXT DEFAULT 'KES',
+  payment_method TEXT,
+  pickup_station TEXT,
+  is_sold BOOLEAN DEFAULT false,
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP DEFAULT now()
+);
+
+-- Test data
+INSERT INTO activities (title, description, activity_date, start_ts, end_ts)
+VALUES ('Peer Counseling Workshop', 'Learn peer counseling skills', '2025-09-20 14:00:00', '2025-09-20 14:00:00', '2025-09-20 16:00:00');
+
+INSERT INTO books (title, author, price_cents)
+VALUES ('Counseling Skills Handbook', 'Dr. Achieng', 150000);
