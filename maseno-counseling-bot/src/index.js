@@ -124,6 +124,7 @@ app.use("/api/slots", slotsRoutes);
 app.use("/api/recent-activity", recentActivityRoutes);
 
 app.get("/api/health", (_, res) => res.json({ status: "ok" }));
+app.get("/health", (_, res) => res.json({ status: "ok" }));
 
 // Only start server if not in Vercel environment
 if (process.env.VERCEL !== '1') {
