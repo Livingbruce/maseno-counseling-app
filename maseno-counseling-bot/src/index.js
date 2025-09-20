@@ -145,6 +145,44 @@ app.get("/dashboard/announcements", async (req, res) => {
   }
 });
 
+app.post("/dashboard/announcements", async (req, res) => {
+  try {
+    const { message, is_force } = req.body;
+    const result = await pool.query(
+      "INSERT INTO announcements (message, is_force, created_at) VALUES ($1, $2, NOW()) RETURNING *",
+      [message, is_force || false]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error creating announcement:", err);
+    res.status(500).json({ error: "Failed to create announcement" });
+  }
+});
+
+app.post("/dashboard/announcements/force", async (req, res) => {
+  try {
+    const { message, is_force } = req.body;
+    const result = await pool.query(
+      "INSERT INTO announcements (message, is_force, created_at) VALUES ($1, $2, NOW()) RETURNING *",
+      [message, true]
+    );
+    
+    // For force announcements, you might want to send to all users
+    // For now, just return the created announcement
+    res.json({
+      ...result.rows[0],
+      stats: {
+        total_users: 0,
+        sent_successfully: 0,
+        failed: 0
+      }
+    });
+  } catch (err) {
+    console.error("Error creating force announcement:", err);
+    res.status(500).json({ error: "Failed to create force announcement" });
+  }
+});
+
 app.get("/dashboard/activities", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM activities ORDER BY activity_date DESC");
@@ -155,6 +193,20 @@ app.get("/dashboard/activities", async (req, res) => {
   }
 });
 
+app.post("/dashboard/activities", async (req, res) => {
+  try {
+    const { title, description, activity_date, activity_time, location } = req.body;
+    const result = await pool.query(
+      "INSERT INTO activities (title, description, activity_date, activity_time, location, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *",
+      [title, description, activity_date, activity_time, location]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error creating activity:", err);
+    res.status(500).json({ error: "Failed to create activity" });
+  }
+});
+
 app.get("/dashboard/books", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM books ORDER BY created_at DESC");
@@ -162,6 +214,20 @@ app.get("/dashboard/books", async (req, res) => {
   } catch (err) {
     console.error("Error fetching books:", err);
     res.status(500).json({ error: "Failed to fetch books" });
+  }
+});
+
+app.post("/dashboard/books", async (req, res) => {
+  try {
+    const { title, author, price, description, isbn, condition } = req.body;
+    const result = await pool.query(
+      "INSERT INTO books (title, author, price, description, isbn, condition, created_at) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *",
+      [title, author, price, description, isbn, condition]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error creating book:", err);
+    res.status(500).json({ error: "Failed to create book" });
   }
 });
 
