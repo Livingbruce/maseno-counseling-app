@@ -351,10 +351,16 @@ app.delete("/dashboard/appointments/:id", async (req, res) => {
 app.put("/dashboard/books/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, author, price, description, isbn, condition } = req.body;
+    const { title, author, price, pickup_station } = req.body;
+    
+    if (!title || !author || !price) {
+      return res.status(400).json({ error: "Title, author, and price are required" });
+    }
+    
+    const price_cents = Math.round(price * 100); // Convert to cents
     const result = await pool.query(
-      "UPDATE books SET title = $1, author = $2, price = $3, description = $4, isbn = $5, condition = $6, updated_at = NOW() WHERE id = $7 RETURNING *",
-      [title, author, price, description, isbn, condition, id]
+      "UPDATE books SET title = $1, author = $2, price_cents = $3, pickup_station = $4 WHERE id = $5 RETURNING *",
+      [title, author, price_cents, pickup_station || null, id]
     );
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Book not found" });
