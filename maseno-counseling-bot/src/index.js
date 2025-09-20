@@ -279,11 +279,16 @@ app.get("/dashboard/books", async (req, res) => {
 
 app.post("/dashboard/books", async (req, res) => {
   try {
-    const { title, author, price, description, isbn, condition } = req.body;
+    const { title, author, price, pickup_station } = req.body;
+    
+    if (!title || !author || !price) {
+      return res.status(400).json({ error: "Title, author, and price are required" });
+    }
+    
     const price_cents = Math.round(price * 100); // Convert to cents
     const result = await pool.query(
-      "INSERT INTO books (title, author, price_cents, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *",
-      [title, author, price_cents]
+      "INSERT INTO books (title, author, price_cents, pickup_station, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING *",
+      [title, author, price_cents, pickup_station || null]
     );
     res.json(result.rows[0]);
   } catch (err) {
