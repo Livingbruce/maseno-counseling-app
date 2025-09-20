@@ -183,6 +183,40 @@ app.post("/dashboard/announcements/force", async (req, res) => {
   }
 });
 
+// DELETE announcement
+app.delete("/dashboard/announcements/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query("DELETE FROM announcements WHERE id = $1 RETURNING *", [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Announcement not found" });
+    }
+    res.json({ success: true, message: "Announcement deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting announcement:", err);
+    res.status(500).json({ error: "Failed to delete announcement" });
+  }
+});
+
+// PUT announcement
+app.put("/dashboard/announcements/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { message, is_force } = req.body;
+    const result = await pool.query(
+      "UPDATE announcements SET message = $1, is_force = $2, created_at = NOW() WHERE id = $3 RETURNING *",
+      [message, is_force || false, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Announcement not found" });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error updating announcement:", err);
+    res.status(500).json({ error: "Failed to update announcement" });
+  }
+});
+
 app.get("/dashboard/activities", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM activities ORDER BY activity_date DESC");
@@ -228,6 +262,122 @@ app.post("/dashboard/books", async (req, res) => {
   } catch (err) {
     console.error("Error creating book:", err);
     res.status(500).json({ error: "Failed to create book" });
+  }
+});
+
+// Appointment management endpoints
+app.post("/dashboard/appointments/:id/cancel", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      "UPDATE appointments SET status = 'cancelled', updated_at = NOW() WHERE id = $1 RETURNING *",
+      [id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+    res.json({ success: true, message: "Appointment cancelled successfully", appointment: result.rows[0] });
+  } catch (err) {
+    console.error("Error cancelling appointment:", err);
+    res.status(500).json({ error: "Failed to cancel appointment" });
+  }
+});
+
+app.post("/dashboard/appointments/:id/postpone", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { new_start_ts, new_end_ts } = req.body;
+    const result = await pool.query(
+      "UPDATE appointments SET start_ts = $1, end_ts = $2, updated_at = NOW() WHERE id = $3 RETURNING *",
+      [new_start_ts, new_end_ts, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+    res.json({ success: true, message: "Appointment postponed successfully", appointment: result.rows[0] });
+  } catch (err) {
+    console.error("Error postponing appointment:", err);
+    res.status(500).json({ error: "Failed to postpone appointment" });
+  }
+});
+
+app.delete("/dashboard/appointments/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query("DELETE FROM appointments WHERE id = $1 RETURNING *", [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+    res.json({ success: true, message: "Appointment deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting appointment:", err);
+    res.status(500).json({ error: "Failed to delete appointment" });
+  }
+});
+
+// Book management endpoints
+app.put("/dashboard/books/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, author, price, description, isbn, condition } = req.body;
+    const result = await pool.query(
+      "UPDATE books SET title = $1, author = $2, price = $3, description = $4, isbn = $5, condition = $6, updated_at = NOW() WHERE id = $7 RETURNING *",
+      [title, author, price, description, isbn, condition, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Book not found" });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error updating book:", err);
+    res.status(500).json({ error: "Failed to update book" });
+  }
+});
+
+app.delete("/dashboard/books/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query("DELETE FROM books WHERE id = $1 RETURNING *", [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Book not found" });
+    }
+    res.json({ success: true, message: "Book deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting book:", err);
+    res.status(500).json({ error: "Failed to delete book" });
+  }
+});
+
+// Activity management endpoints
+app.put("/dashboard/activities/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, activity_date, activity_time, location } = req.body;
+    const result = await pool.query(
+      "UPDATE activities SET title = $1, description = $2, activity_date = $3, activity_time = $4, location = $5, updated_at = NOW() WHERE id = $6 RETURNING *",
+      [title, description, activity_date, activity_time, location, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Activity not found" });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error updating activity:", err);
+    res.status(500).json({ error: "Failed to update activity" });
+  }
+});
+
+app.delete("/dashboard/activities/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query("DELETE FROM activities WHERE id = $1 RETURNING *", [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Activity not found" });
+    }
+    res.json({ success: true, message: "Activity deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting activity:", err);
+    res.status(500).json({ error: "Failed to delete activity" });
   }
 });
 

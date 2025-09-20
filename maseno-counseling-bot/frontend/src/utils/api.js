@@ -20,9 +20,29 @@ export async function fetchWithAuth(url, options = {}) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const data = await response.json();
-      console.log('✅ API Response data:', data);
-      return data;
+        const data = await response.json();
+        console.log('✅ API Response data:', data);
+        
+        // Transform data to match frontend expectations
+        if (url === '/dashboard/appointments') {
+          return data.map(appointment => ({
+            ...appointment,
+            student_name: appointment.telegram_username ? 
+              `@${appointment.telegram_username}` : 
+              `Student #${appointment.student_id}`,
+            notes: appointment.notes || 'No notes available'
+          }));
+        }
+        
+        if (url === '/dashboard/announcements') {
+          return data.map(announcement => ({
+            ...announcement,
+            title: announcement.message.substring(0, 50) + (announcement.message.length > 50 ? '...' : ''),
+            created_at: announcement.created_at
+          }));
+        }
+        
+        return data;
     } catch (error) {
       console.error('❌ API call failed, falling back to mock data:', error);
       // Continue to fallback mock data
@@ -244,6 +264,26 @@ const api = {
         
         const data = await response.json();
         console.log('✅ API.get Response data:', data);
+        
+        // Transform data to match frontend expectations
+        if (url === '/dashboard/appointments') {
+          return data.map(appointment => ({
+            ...appointment,
+            student_name: appointment.telegram_username ? 
+              `@${appointment.telegram_username}` : 
+              `Student #${appointment.student_id}`,
+            notes: appointment.notes || 'No notes available'
+          }));
+        }
+        
+        if (url === '/dashboard/announcements') {
+          return data.map(announcement => ({
+            ...announcement,
+            title: announcement.message.substring(0, 50) + (announcement.message.length > 50 ? '...' : ''),
+            created_at: announcement.created_at
+          }));
+        }
+        
         return data;
       } catch (error) {
         console.error('❌ API.get call failed, falling back to mock data:', error);
