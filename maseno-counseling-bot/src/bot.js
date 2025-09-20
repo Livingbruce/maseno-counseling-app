@@ -1104,7 +1104,8 @@ bot.hears("📚 Books for Sale", async (ctx) => {
 
     let msg = "📚 Available Books:\n\n";
     books.forEach((b, i) => {
-      msg += `${i + 1}. ${b.title} by ${b.author || "Unknown"}\n💰 Price: KES ${b.price_cents / 100}\n📍 Pickup: ${b.pickup_station || "TBD"}\n\n`;
+      const pickup = b.pickup_station && b.pickup_station.trim() ? b.pickup_station : "Contact seller for pickup location";
+      msg += `${i + 1}. ${b.title} by ${b.author || "Unknown"}\n💰 Price: KES ${b.price_cents / 100}\n📍 Pickup: ${pickup}\n\n`;
     });
 
     ctx.reply(msg);
