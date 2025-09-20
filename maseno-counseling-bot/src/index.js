@@ -247,9 +247,9 @@ app.post("/dashboard/activities", async (req, res) => {
     console.log('Activities table columns:', checkColumns.rows.map(r => r.column_name));
     
     // Try to insert with only the basic columns that definitely exist
-    // counselor_id is required, so we'll set it to NULL (it should allow NULL based on schema)
+    // counselor_id seems to have NOT NULL constraint, so we'll provide a default value
     const result = await pool.query(
-      "INSERT INTO activities (title, description, counselor_id, created_at) VALUES ($1, $2, NULL, NOW()) RETURNING *",
+      "INSERT INTO activities (title, description, counselor_id, created_at) VALUES ($1, $2, 1, NOW()) RETURNING *",
       [title, description || '']
     );
     
