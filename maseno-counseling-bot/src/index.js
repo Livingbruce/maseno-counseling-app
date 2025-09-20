@@ -260,8 +260,8 @@ app.post("/dashboard/books", async (req, res) => {
     const { title, author, price, description, isbn, condition } = req.body;
     const price_cents = Math.round(price * 100); // Convert to cents
     const result = await pool.query(
-      "INSERT INTO books (title, author, price_cents, description, isbn, condition, created_at) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *",
-      [title, author, price_cents, description, isbn, condition]
+      "INSERT INTO books (title, author, price_cents, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *",
+      [title, author, price_cents]
     );
     res.json(result.rows[0]);
   } catch (err) {
