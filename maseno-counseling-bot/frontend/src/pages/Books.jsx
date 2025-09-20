@@ -77,8 +77,8 @@ export default function Books() {
       } else {
         // Add new book
         const response = await api.post("/dashboard/books", bookData);
-        if (response.book) {
-          setBooks([response.book, ...books]);
+        if (response) {
+          setBooks([response, ...books]);
         }
       }
 
