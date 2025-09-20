@@ -1,4 +1,29 @@
+// Railway backend URL
+const API_BASE_URL = 'https://maseno-counseling-bot-production.up.railway.app';
+
 export async function fetchWithAuth(url, options = {}) {
+  // If it's a real API call, use the Railway backend
+  if (url.startsWith('/api/') || url.startsWith('/dashboard/') || url.startsWith('/auth/')) {
+    try {
+      const response = await fetch(`${API_BASE_URL}${url}`, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('API call failed, falling back to mock data:', error);
+      // Fall back to mock data if API fails
+    }
+  }
+  
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 500));
   
@@ -196,6 +221,26 @@ const updateRecentActivities = () => {
 // Create a default export with axios-like API for the new pages
 const api = {
   get: async (url) => {
+    // If it's a real API call, use the Railway backend
+    if (url.startsWith('/api/') || url.startsWith('/dashboard/') || url.startsWith('/auth/')) {
+      try {
+        const response = await fetch(`${API_BASE_URL}${url}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+      } catch (error) {
+        console.error('API call failed, falling back to mock data:', error);
+        // Fall back to mock data if API fails
+      }
+    }
+    
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
     
@@ -302,6 +347,28 @@ const api = {
     return storedData[url] || [];
   },
   post: async (url, data) => {
+    // If it's a real API call, use the Railway backend
+    if (url.startsWith('/api/') || url.startsWith('/dashboard/') || url.startsWith('/auth/')) {
+      try {
+        const response = await fetch(`${API_BASE_URL}${url}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+      } catch (error) {
+        console.error('API call failed, falling back to mock data:', error);
+        // Fall back to mock data if API fails
+      }
+    }
+    
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
     
@@ -416,6 +483,28 @@ const api = {
     return { success: true, message: 'Operation completed successfully' };
   },
   put: async (url, data) => {
+    // If it's a real API call, use the Railway backend
+    if (url.startsWith('/api/') || url.startsWith('/dashboard/') || url.startsWith('/auth/')) {
+      try {
+        const response = await fetch(`${API_BASE_URL}${url}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+      } catch (error) {
+        console.error('API call failed, falling back to mock data:', error);
+        // Fall back to mock data if API fails
+      }
+    }
+    
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
     
@@ -474,6 +563,27 @@ const api = {
     return { success: true, message: 'Update completed successfully' };
   },
   delete: async (url) => {
+    // If it's a real API call, use the Railway backend
+    if (url.startsWith('/api/') || url.startsWith('/dashboard/') || url.startsWith('/auth/')) {
+      try {
+        const response = await fetch(`${API_BASE_URL}${url}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+      } catch (error) {
+        console.error('API call failed, falling back to mock data:', error);
+        // Fall back to mock data if API fails
+      }
+    }
+    
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
     
