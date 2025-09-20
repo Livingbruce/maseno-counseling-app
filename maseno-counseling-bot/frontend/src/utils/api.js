@@ -25,14 +25,14 @@ export async function fetchWithAuth(url, options = {}) {
       return data;
     } catch (error) {
       console.error('❌ API call failed, falling back to mock data:', error);
-      // Fall back to mock data if API fails
+      // Continue to fallback mock data
     }
   }
   
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 500));
   
-  // Get data from localStorage or use defaults (same as main API)
+  // Get data from localStorage or use defaults (fallback)
   const storedData = {
     '/dashboard/appointments': getStoredData('appointments', [
       { 
@@ -247,14 +247,14 @@ const api = {
         return data;
       } catch (error) {
         console.error('❌ API.get call failed, falling back to mock data:', error);
-        // Fall back to mock data if API fails
+        // Continue to fallback mock data
       }
     }
     
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
     
-    // Get data from localStorage or use defaults
+    // Get data from localStorage or use defaults (fallback)
     const storedData = {
       '/dashboard/appointments': getStoredData('appointments', [
         { 
