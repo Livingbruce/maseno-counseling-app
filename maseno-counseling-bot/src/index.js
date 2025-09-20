@@ -236,22 +236,20 @@ app.post("/dashboard/activities", async (req, res) => {
       return res.status(400).json({ error: "Title is required" });
     }
     
-    // Convert to proper timestamp format
-    const start_ts = new Date(`${activity_date}T${activity_time}:00`);
-    const end_ts = new Date(start_ts.getTime() + 60 * 60 * 1000); // Add 1 hour
-    const activityDate = start_ts; // Use start_ts as activity_date since it's TIMESTAMP
+    // First, let's check what columns actually exist in the activities table
+    const checkColumns = await pool.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'activities' 
+      ORDER BY ordinal_position
+    `);
     
-    console.log('Creating activity with data:', {
-      title,
-      description: description || '',
-      activityDate: activityDate.toISOString(),
-      start_ts: start_ts.toISOString(),
-      end_ts: end_ts.toISOString()
-    });
+    console.log('Activities table columns:', checkColumns.rows.map(r => r.column_name));
     
+    // Try to insert with only the basic columns that definitely exist
     const result = await pool.query(
-      "INSERT INTO activities (title, description, activity_date, start_ts, end_ts, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *",
-      [title, description || '', activityDate, start_ts, end_ts]
+      "INSERT INTO activities (title, description, created_at) VALUES ($1, $2, NOW()) RETURNING *",
+      [title, description || '']
     );
     
     console.log('Activity created successfully:', result.rows[0]);
@@ -427,7 +425,7 @@ app.get("/dashboard/absence", async (req, res) => {
 
 app.post("/dashboard/absence", async (req, res) => {
   try {
-    // First ensure the table exists
+    // First ensure the table exists with correct schema
     await pool.query(`
       CREATE TABLE IF NOT EXISTS absence_days (
         id SERIAL PRIMARY KEY,
@@ -448,6 +446,16 @@ app.post("/dashboard/absence", async (req, res) => {
       date,
       reason: reason || ''
     });
+    
+    // Check if the table was created successfully
+    const checkTable = await pool.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'absence_days' 
+      ORDER BY ordinal_position
+    `);
+    
+    console.log('Absence_days table columns:', checkTable.rows.map(r => r.column_name));
     
     const result = await pool.query(
       "INSERT INTO absence_days (date, reason, created_at) VALUES ($1, $2, NOW()) RETURNING *",
