@@ -10,6 +10,7 @@ import {
 const router = express.Router();
 
 router.get("/", getAllAppointments);
+router.get("/public", getAllAppointments); // Public route for frontend
 router.post("/", createAppointment); 
 router.get("/counselor/:id", getAppointmentsByCounselor); 
 router.patch("/:id/status", updateAppointmentStatus); 

@@ -123,6 +123,12 @@ app.use("/api/books", booksRoutes);
 app.use("/api/slots", slotsRoutes);
 app.use("/api/recent-activity", recentActivityRoutes);
 
+// Add public routes for frontend (without authentication)
+app.use("/dashboard", announcementsRoutes);
+app.use("/dashboard", appointmentsRoutes);
+app.use("/dashboard", activitiesRoutes);
+app.use("/dashboard", booksRoutes);
+
 app.get("/api/health", (_, res) => res.json({ status: "ok" }));
 app.get("/health", (_, res) => res.json({ status: "ok" }));
 

@@ -1031,7 +1031,7 @@ cron.schedule('* * * * *', sendNotifications);
 // Keep existing handlers for other features
 bot.hears("📢 Announcements", async (ctx) => {
   try {
-    const res = await fetch("http://localhost:4000/api/announcements");
+    const res = await fetch(`${process.env.API_URL || 'https://maseno-counseling-bot-production.up.railway.app'}/api/announcements`);
     const announcements = await res.json();
     if (!announcements.length) {
       return ctx.reply("📢 No announcements at the moment.");
@@ -1049,7 +1049,7 @@ bot.hears("📢 Announcements", async (ctx) => {
 
 bot.hears("🗓 Activities", async (ctx) => {
   try {
-    const res = await fetch("http://localhost:4000/api/activities");
+    const res = await fetch(`${process.env.API_URL || 'https://maseno-counseling-bot-production.up.railway.app'}/api/activities`);
     const activities = await res.json();
     console.log("Bot received activities:", activities);
     
@@ -1092,7 +1092,7 @@ bot.hears("📚 Books for Sale", async (ctx) => {
   try {
     console.log("📚 Books command triggered");
 
-    const res = await fetch("http://localhost:4000/api/books");
+    const res = await fetch(`${process.env.API_URL || 'https://maseno-counseling-bot-production.up.railway.app'}/api/books`);
     console.log("Response status:", res.status);
 
     const books = await res.json();
