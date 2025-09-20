@@ -230,10 +230,10 @@ app.get("/dashboard/activities", async (req, res) => {
 app.post("/dashboard/activities", async (req, res) => {
   try {
     const { title, description, activity_date, activity_time, location } = req.body;
-    // Use simple date format for now
-    const activityDate = new Date(activity_date);
+    // Convert to proper timestamp format
     const start_ts = new Date(`${activity_date}T${activity_time}:00`);
     const end_ts = new Date(start_ts.getTime() + 60 * 60 * 1000); // Add 1 hour
+    const activityDate = start_ts; // Use start_ts as activity_date since it's TIMESTAMP
     
     const result = await pool.query(
       "INSERT INTO activities (title, description, activity_date, start_ts, end_ts, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *",
@@ -390,6 +390,16 @@ app.delete("/dashboard/activities/:id", async (req, res) => {
 // Absence management endpoints
 app.get("/dashboard/absence", async (req, res) => {
   try {
+    // First try to create the table if it doesn't exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS absence_days (
+        id SERIAL PRIMARY KEY,
+        date DATE NOT NULL,
+        reason TEXT,
+        created_at TIMESTAMP DEFAULT now()
+      )
+    `);
+    
     const result = await pool.query("SELECT * FROM absence_days ORDER BY date DESC");
     res.json(result.rows);
   } catch (err) {
@@ -400,6 +410,16 @@ app.get("/dashboard/absence", async (req, res) => {
 
 app.post("/dashboard/absence", async (req, res) => {
   try {
+    // First ensure the table exists
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS absence_days (
+        id SERIAL PRIMARY KEY,
+        date DATE NOT NULL,
+        reason TEXT,
+        created_at TIMESTAMP DEFAULT now()
+      )
+    `);
+    
     const { date, reason } = req.body;
     const result = await pool.query(
       "INSERT INTO absence_days (date, reason, created_at) VALUES ($1, $2, NOW()) RETURNING *",
