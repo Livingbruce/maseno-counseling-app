@@ -230,19 +230,36 @@ app.get("/dashboard/activities", async (req, res) => {
 app.post("/dashboard/activities", async (req, res) => {
   try {
     const { title, description, activity_date, activity_time, location } = req.body;
+    
+    // Ensure we have required fields
+    if (!title) {
+      return res.status(400).json({ error: "Title is required" });
+    }
+    
     // Convert to proper timestamp format
     const start_ts = new Date(`${activity_date}T${activity_time}:00`);
     const end_ts = new Date(start_ts.getTime() + 60 * 60 * 1000); // Add 1 hour
     const activityDate = start_ts; // Use start_ts as activity_date since it's TIMESTAMP
     
+    console.log('Creating activity with data:', {
+      title,
+      description: description || '',
+      activityDate: activityDate.toISOString(),
+      start_ts: start_ts.toISOString(),
+      end_ts: end_ts.toISOString()
+    });
+    
     const result = await pool.query(
       "INSERT INTO activities (title, description, activity_date, start_ts, end_ts, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *",
-      [title, description, activityDate, start_ts, end_ts]
+      [title, description || '', activityDate, start_ts, end_ts]
     );
+    
+    console.log('Activity created successfully:', result.rows[0]);
     res.json(result.rows[0]);
   } catch (err) {
     console.error("Error creating activity:", err);
-    res.status(500).json({ error: "Failed to create activity" });
+    console.error("Error details:", err.message);
+    res.status(500).json({ error: "Failed to create activity", details: err.message });
   }
 });
 
@@ -421,14 +438,28 @@ app.post("/dashboard/absence", async (req, res) => {
     `);
     
     const { date, reason } = req.body;
+    
+    // Ensure we have required fields
+    if (!date) {
+      return res.status(400).json({ error: "Date is required" });
+    }
+    
+    console.log('Creating absence day with data:', {
+      date,
+      reason: reason || ''
+    });
+    
     const result = await pool.query(
       "INSERT INTO absence_days (date, reason, created_at) VALUES ($1, $2, NOW()) RETURNING *",
-      [date, reason]
+      [date, reason || '']
     );
+    
+    console.log('Absence day created successfully:', result.rows[0]);
     res.json(result.rows[0]);
   } catch (err) {
     console.error("Error creating absence day:", err);
-    res.status(500).json({ error: "Failed to create absence day" });
+    console.error("Error details:", err.message);
+    res.status(500).json({ error: "Failed to create absence day", details: err.message });
   }
 });
 
