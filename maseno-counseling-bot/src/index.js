@@ -247,8 +247,9 @@ app.post("/dashboard/activities", async (req, res) => {
     console.log('Activities table columns:', checkColumns.rows.map(r => r.column_name));
     
     // Try to insert with only the basic columns that definitely exist
+    // counselor_id is required, so we'll set it to NULL (it should allow NULL based on schema)
     const result = await pool.query(
-      "INSERT INTO activities (title, description, created_at) VALUES ($1, $2, NOW()) RETURNING *",
+      "INSERT INTO activities (title, description, counselor_id, created_at) VALUES ($1, $2, NULL, NOW()) RETURNING *",
       [title, description || '']
     );
     
@@ -426,8 +427,10 @@ app.get("/dashboard/absence", async (req, res) => {
 app.post("/dashboard/absence", async (req, res) => {
   try {
     // First ensure the table exists with correct schema
+    // Drop and recreate to ensure correct schema
+    await pool.query(`DROP TABLE IF EXISTS absence_days`);
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS absence_days (
+      CREATE TABLE absence_days (
         id SERIAL PRIMARY KEY,
         date DATE NOT NULL,
         reason TEXT,
