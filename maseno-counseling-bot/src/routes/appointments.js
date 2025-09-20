@@ -3,11 +3,13 @@ import {
   createAppointment,
   getAppointmentsByCounselor,
   updateAppointmentStatus,
-  cancelAppointment
+  cancelAppointment,
+  getAllAppointments
 } from "../controllers/appointmentsControllers.js";
 
 const router = express.Router();
 
+router.get("/", getAllAppointments);
 router.post("/", createAppointment); 
 router.get("/counselor/:id", getAppointmentsByCounselor); 
 router.patch("/:id/status", updateAppointmentStatus); 

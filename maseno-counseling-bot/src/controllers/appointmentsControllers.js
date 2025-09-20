@@ -1,5 +1,17 @@
 import pool from "../db/pool.js";
 
+export async function getAllAppointments(req, res) {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM appointments ORDER BY start_ts DESC"
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching appointments:", err);
+    res.status(500).json({ error: "Failed to fetch appointments" });
+  }
+}
+
 export async function createAppointment(req, res) {
   try {
     const { student_id, counselor_id, start_ts, end_ts } = req.body;
