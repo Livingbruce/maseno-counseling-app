@@ -230,13 +230,14 @@ app.get("/dashboard/activities", async (req, res) => {
 app.post("/dashboard/activities", async (req, res) => {
   try {
     const { title, description, activity_date, activity_time, location } = req.body;
-    // Convert activity_date and activity_time to start_ts and end_ts
+    // Use simple date format for now
+    const activityDate = new Date(activity_date);
     const start_ts = new Date(`${activity_date}T${activity_time}:00`);
     const end_ts = new Date(start_ts.getTime() + 60 * 60 * 1000); // Add 1 hour
     
     const result = await pool.query(
       "INSERT INTO activities (title, description, activity_date, start_ts, end_ts, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *",
-      [title, description, activity_date, start_ts, end_ts]
+      [title, description, activityDate, start_ts, end_ts]
     );
     res.json(result.rows[0]);
   } catch (err) {
