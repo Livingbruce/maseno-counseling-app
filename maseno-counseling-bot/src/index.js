@@ -230,9 +230,13 @@ app.get("/dashboard/activities", async (req, res) => {
 app.post("/dashboard/activities", async (req, res) => {
   try {
     const { title, description, activity_date, activity_time, location } = req.body;
+    // Convert activity_date and activity_time to start_ts and end_ts
+    const start_ts = new Date(`${activity_date}T${activity_time}:00`);
+    const end_ts = new Date(start_ts.getTime() + 60 * 60 * 1000); // Add 1 hour
+    
     const result = await pool.query(
-      "INSERT INTO activities (title, description, activity_date, activity_time, location, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *",
-      [title, description, activity_date, activity_time, location]
+      "INSERT INTO activities (title, description, activity_date, start_ts, end_ts, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *",
+      [title, description, activity_date, start_ts, end_ts]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -254,9 +258,10 @@ app.get("/dashboard/books", async (req, res) => {
 app.post("/dashboard/books", async (req, res) => {
   try {
     const { title, author, price, description, isbn, condition } = req.body;
+    const price_cents = Math.round(price * 100); // Convert to cents
     const result = await pool.query(
-      "INSERT INTO books (title, author, price, description, isbn, condition, created_at) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *",
-      [title, author, price, description, isbn, condition]
+      "INSERT INTO books (title, author, price_cents, description, isbn, condition, created_at) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *",
+      [title, author, price_cents, description, isbn, condition]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -378,6 +383,45 @@ app.delete("/dashboard/activities/:id", async (req, res) => {
   } catch (err) {
     console.error("Error deleting activity:", err);
     res.status(500).json({ error: "Failed to delete activity" });
+  }
+});
+
+// Absence management endpoints
+app.get("/dashboard/absence", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM absence_days ORDER BY date DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching absence days:", err);
+    res.status(500).json({ error: "Failed to fetch absence days" });
+  }
+});
+
+app.post("/dashboard/absence", async (req, res) => {
+  try {
+    const { date, reason } = req.body;
+    const result = await pool.query(
+      "INSERT INTO absence_days (date, reason, created_at) VALUES ($1, $2, NOW()) RETURNING *",
+      [date, reason]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error creating absence day:", err);
+    res.status(500).json({ error: "Failed to create absence day" });
+  }
+});
+
+app.delete("/dashboard/absence/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query("DELETE FROM absence_days WHERE id = $1 RETURNING *", [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Absence day not found" });
+    }
+    res.json({ success: true, message: "Absence day deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting absence day:", err);
+    res.status(500).json({ error: "Failed to delete absence day" });
   }
 });
 

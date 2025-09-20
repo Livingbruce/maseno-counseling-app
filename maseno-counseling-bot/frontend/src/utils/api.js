@@ -34,15 +34,31 @@ export async function fetchWithAuth(url, options = {}) {
         }));
       }
       
-      if (url === '/dashboard/announcements') {
-        return data.map(announcement => ({
-          ...announcement,
-          title: announcement.message.substring(0, 50) + (announcement.message.length > 50 ? '...' : ''),
-          created_at: announcement.created_at
-        }));
-      }
-      
-      return data;
+        if (url === '/dashboard/announcements') {
+          return data.map(announcement => ({
+            ...announcement,
+            title: announcement.message.substring(0, 50) + (announcement.message.length > 50 ? '...' : ''),
+            created_at: announcement.created_at
+          }));
+        }
+        
+        if (url === '/dashboard/books') {
+          return data.map(book => ({
+            ...book,
+            price: book.price_cents ? book.price_cents / 100 : 0, // Convert cents to regular price
+            available: !book.is_sold
+          }));
+        }
+        
+        if (url === '/dashboard/activities') {
+          return data.map(activity => ({
+            ...activity,
+            activity_time: activity.start_ts ? new Date(activity.start_ts).toTimeString().substring(0, 5) : '00:00',
+            location: activity.location || 'TBD'
+          }));
+        }
+        
+        return data;
     } catch (error) {
       console.error('❌ API call failed:', error);
       // Return empty array instead of mock data
@@ -173,6 +189,22 @@ const api = {
             ...announcement,
             title: announcement.message.substring(0, 50) + (announcement.message.length > 50 ? '...' : ''),
             created_at: announcement.created_at
+          }));
+        }
+        
+        if (url === '/dashboard/books') {
+          return data.map(book => ({
+            ...book,
+            price: book.price_cents ? book.price_cents / 100 : 0, // Convert cents to regular price
+            available: !book.is_sold
+          }));
+        }
+        
+        if (url === '/dashboard/activities') {
+          return data.map(activity => ({
+            ...activity,
+            activity_time: activity.start_ts ? new Date(activity.start_ts).toTimeString().substring(0, 5) : '00:00',
+            location: activity.location || 'TBD'
           }));
         }
         
