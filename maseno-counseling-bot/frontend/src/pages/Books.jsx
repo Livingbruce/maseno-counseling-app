@@ -15,11 +15,13 @@ export default function Books() {
   });
 
   const formatPrice = (price) => {
+    // Handle undefined, null, or NaN values
+    const validPrice = price && !isNaN(price) ? Number(price) : 0;
     return new Intl.NumberFormat('en-KE', {
       style: 'currency',
       currency: 'KES',
       minimumFractionDigits: 0
-    }).format(price);
+    }).format(validPrice);
   };
 
   // Fetch books

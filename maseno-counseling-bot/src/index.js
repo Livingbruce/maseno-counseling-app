@@ -236,21 +236,26 @@ app.post("/dashboard/activities", async (req, res) => {
       return res.status(400).json({ error: "Title is required" });
     }
     
-    // First, let's check what columns actually exist in the activities table
-    const checkColumns = await pool.query(`
-      SELECT column_name 
-      FROM information_schema.columns 
-      WHERE table_name = 'activities' 
-      ORDER BY ordinal_position
-    `);
+    // Create proper timestamps for all required fields
+    const now = new Date();
+    const start_ts = activity_date && activity_time ? 
+      new Date(`${activity_date}T${activity_time}:00`) : now;
+    const end_ts = new Date(start_ts.getTime() + 60 * 60 * 1000); // Add 1 hour
+    const activityDate = start_ts;
     
-    console.log('Activities table columns:', checkColumns.rows.map(r => r.column_name));
+    console.log('Creating activity with data:', {
+      title,
+      description: description || '',
+      counselor_id: 1,
+      activity_date: activityDate,
+      start_ts,
+      end_ts
+    });
     
-    // Try to insert with only the basic columns that definitely exist
-    // counselor_id and activity_date seem to have NOT NULL constraints, so we'll provide default values
+    // Insert with all required fields
     const result = await pool.query(
-      "INSERT INTO activities (title, description, counselor_id, activity_date, created_at) VALUES ($1, $2, 1, NOW(), NOW()) RETURNING *",
-      [title, description || '']
+      "INSERT INTO activities (title, description, counselor_id, activity_date, start_ts, end_ts, created_at) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *",
+      [title, description || '', 1, activityDate, start_ts, end_ts]
     );
     
     console.log('Activity created successfully:', result.rows[0]);
