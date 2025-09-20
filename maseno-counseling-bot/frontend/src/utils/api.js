@@ -5,6 +5,7 @@ export async function fetchWithAuth(url, options = {}) {
   // If it's a real API call, use the Railway backend
   if (url.startsWith('/api/') || url.startsWith('/dashboard/') || url.startsWith('/auth/')) {
     try {
+      console.log('🚀 Making API call to:', `${API_BASE_URL}${url}`);
       const response = await fetch(`${API_BASE_URL}${url}`, {
         ...options,
         headers: {
@@ -13,13 +14,17 @@ export async function fetchWithAuth(url, options = {}) {
         },
       });
       
+      console.log('📡 API Response status:', response.status);
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      return await response.json();
+      const data = await response.json();
+      console.log('✅ API Response data:', data);
+      return data;
     } catch (error) {
-      console.error('API call failed, falling back to mock data:', error);
+      console.error('❌ API call failed, falling back to mock data:', error);
       // Fall back to mock data if API fails
     }
   }
@@ -224,19 +229,24 @@ const api = {
     // If it's a real API call, use the Railway backend
     if (url.startsWith('/api/') || url.startsWith('/dashboard/') || url.startsWith('/auth/')) {
       try {
+        console.log('🚀 API.get making call to:', `${API_BASE_URL}${url}`);
         const response = await fetch(`${API_BASE_URL}${url}`, {
           headers: {
             'Content-Type': 'application/json',
           },
         });
         
+        console.log('📡 API.get Response status:', response.status);
+        
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        return await response.json();
+        const data = await response.json();
+        console.log('✅ API.get Response data:', data);
+        return data;
       } catch (error) {
-        console.error('API call failed, falling back to mock data:', error);
+        console.error('❌ API.get call failed, falling back to mock data:', error);
         // Fall back to mock data if API fails
       }
     }
