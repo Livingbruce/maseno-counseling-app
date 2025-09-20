@@ -53,7 +53,7 @@ export async function fetchWithAuth(url, options = {}) {
         if (url === '/dashboard/activities') {
           return data.map(activity => ({
             ...activity,
-            activity_time: activity.start_ts ? new Date(activity.start_ts).toTimeString().substring(0, 5) : '00:00',
+            activity_time: activity.activity_time || '09:00',
             activity_date: activity.activity_date ? new Date(activity.activity_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
             location: activity.location || 'TBD'
           }));
@@ -204,7 +204,7 @@ const api = {
         if (url === '/dashboard/activities') {
           return data.map(activity => ({
             ...activity,
-            activity_time: activity.start_ts ? new Date(activity.start_ts).toTimeString().substring(0, 5) : '00:00',
+            activity_time: activity.activity_time || '09:00',
             activity_date: activity.activity_date ? new Date(activity.activity_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
             location: activity.location || 'TBD'
           }));

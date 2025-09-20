@@ -240,26 +240,22 @@ app.post("/dashboard/activities", async (req, res) => {
       return res.status(400).json({ error: "Title is required" });
     }
     
-    // Create proper timestamps for all required fields
-    const now = new Date();
-    const start_ts = activity_date && activity_time ? 
-      new Date(`${activity_date}T${activity_time}:00`) : now;
-    const end_ts = new Date(start_ts.getTime() + 60 * 60 * 1000); // Add 1 hour
-    const activityDate = start_ts;
+    // Use provided values or defaults
+    const activityDate = activity_date || new Date().toISOString().split('T')[0];
+    const activityTime = activity_time || '09:00';
     
     console.log('Creating activity with data:', {
       title,
       description: description || '',
       counselor_id: 1,
       activity_date: activityDate,
-      start_ts,
-      end_ts
+      activity_time: activityTime
     });
     
-    // Insert with all required fields
+    // Insert with actual schema columns
     const result = await pool.query(
-      "INSERT INTO activities (title, description, counselor_id, activity_date, start_ts, end_ts, created_at) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *",
-      [title, description || '', 1, activityDate, start_ts, end_ts]
+      "INSERT INTO activities (title, description, counselor_id, activity_date, activity_time, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *",
+      [title, description || '', 1, activityDate, activityTime]
     );
     
     console.log('Activity created successfully:', result.rows[0]);
