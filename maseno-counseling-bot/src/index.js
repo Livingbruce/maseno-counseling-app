@@ -171,14 +171,18 @@ app.post("/dashboard/announcements/force", async (req, res) => {
       [message, true]
     );
     
-    // For force announcements, you might want to send to all users
-    // For now, just return the created announcement
+    // Import and use broadcastMessage function
+    const { broadcastMessage } = await import('./bot.js');
+    
+    // Broadcast the message to all users
+    const broadcastResult = await broadcastMessage(`📢 **URGENT ANNOUNCEMENT**\n\n${message}`);
+    
     res.json({
       ...result.rows[0],
       stats: {
-        total_users: 0,
-        sent_successfully: 0,
-        failed: 0
+        total_users: broadcastResult.totalUsers,
+        sent_successfully: broadcastResult.sentCount,
+        failed: broadcastResult.failedCount
       }
     });
   } catch (err) {

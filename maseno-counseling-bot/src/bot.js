@@ -18,6 +18,85 @@ const userSessions = new Map();
 // Booking session management
 const bookingSessions = new Map();
 
+// Function to register or update user in database
+async function registerUser(telegramUser) {
+  try {
+    const { id, username, first_name, last_name } = telegramUser;
+    
+    // Check if user already exists
+    const existingUser = await pool.query(
+      'SELECT id FROM users WHERE telegram_id = $1',
+      [id]
+    );
+    
+    if (existingUser.rows.length > 0) {
+      // Update last_seen
+      await pool.query(
+        'UPDATE users SET last_seen = NOW(), username = $1, first_name = $2, last_name = $3 WHERE telegram_id = $4',
+        [username, first_name, last_name, id]
+      );
+      console.log(`Updated user: ${username || first_name} (${id})`);
+    } else {
+      // Insert new user
+      await pool.query(
+        'INSERT INTO users (telegram_id, username, first_name, last_name) VALUES ($1, $2, $3, $4)',
+        [id, username, first_name, last_name]
+      );
+      console.log(`Registered new user: ${username || first_name} (${id})`);
+    }
+  } catch (error) {
+    console.error('Error registering user:', error);
+  }
+}
+
+// Function to broadcast message to all active users
+async function broadcastMessage(message) {
+  try {
+    console.log('📢 Broadcasting message to all users...');
+    
+    // Get all active users
+    const result = await pool.query(
+      'SELECT telegram_id, username, first_name FROM users WHERE is_active = true'
+    );
+    
+    const users = result.rows;
+    console.log(`Found ${users.length} active users to broadcast to`);
+    
+    let sentCount = 0;
+    let failedCount = 0;
+    
+    // Send message to each user
+    for (const user of users) {
+      try {
+        await bot.telegram.sendMessage(user.telegram_id, message);
+        sentCount++;
+        console.log(`✅ Sent to ${user.username || user.first_name} (${user.telegram_id})`);
+        
+        // Small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 100));
+      } catch (error) {
+        failedCount++;
+        console.error(`❌ Failed to send to ${user.username || user.first_name} (${user.telegram_id}):`, error.message);
+        
+        // If user blocked the bot, mark as inactive
+        if (error.code === 403) {
+          await pool.query(
+            'UPDATE users SET is_active = false WHERE telegram_id = $1',
+            [user.telegram_id]
+          );
+          console.log(`Marked user ${user.telegram_id} as inactive (blocked bot)`);
+        }
+      }
+    }
+    
+    console.log(`📊 Broadcast complete: ${sentCount} sent, ${failedCount} failed`);
+    return { sentCount, failedCount, totalUsers: users.length };
+  } catch (error) {
+    console.error('Error broadcasting message:', error);
+    return { sentCount: 0, failedCount: 0, totalUsers: 0, error: error.message };
+  }
+}
+
 // Support session management
 const supportSessions = new Map();
 
@@ -275,6 +354,9 @@ bot.use(async (ctx, next) => {
 // Enhanced start command with more conversational tone
 bot.start(async (ctx) => {
   console.log("Bot start command received from user:", ctx.from.username || ctx.from.id);
+  
+  // Register user in database
+  await registerUser(ctx.from);
   
   const welcomeMessage = `Hello ${ctx.from.first_name || 'Student'}! Welcome to Maseno Counseling Bot.
 
@@ -1712,6 +1794,9 @@ Remember: I'm here 24/7 to support you!`;
 
 // Add intelligent conversation flow handler with vertical command list
 bot.on('text', async (ctx) => {
+  // Register user on any text interaction
+  await registerUser(ctx.from);
+  
   const text = ctx.message.text.toLowerCase().trim();
   const userId = ctx.from.id;
   const session = getBookingSession(userId);
@@ -1930,3 +2015,4 @@ bot.on('callback_query', async (ctx) => {
 });
 
 export default bot;
+export { broadcastMessage };
