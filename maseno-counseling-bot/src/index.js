@@ -20,6 +20,7 @@ import announcementsRoutes from "./routes/announcements.js";
 import authRoutes from "./routes/auth.js";
 import activitiesRoutes from "./routes/activities.js";
 import recentActivityRoutes from "./routes/recentActivity.js";
+import pool from "./db/pool.js";
 
 // Security middleware
 import { 
@@ -124,10 +125,45 @@ app.use("/api/slots", slotsRoutes);
 app.use("/api/recent-activity", recentActivityRoutes);
 
 // Add public routes for frontend (without authentication)
-app.use("/dashboard", announcementsRoutes);
-app.use("/dashboard", appointmentsRoutes);
-app.use("/dashboard", activitiesRoutes);
-app.use("/dashboard", booksRoutes);
+app.get("/dashboard/appointments", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM appointments ORDER BY start_ts DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching appointments:", err);
+    res.status(500).json({ error: "Failed to fetch appointments" });
+  }
+});
+
+app.get("/dashboard/announcements", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM announcements ORDER BY created_at DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching announcements:", err);
+    res.status(500).json({ error: "Failed to fetch announcements" });
+  }
+});
+
+app.get("/dashboard/activities", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM activities ORDER BY activity_date DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching activities:", err);
+    res.status(500).json({ error: "Failed to fetch activities" });
+  }
+});
+
+app.get("/dashboard/books", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM books ORDER BY created_at DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching books:", err);
+    res.status(500).json({ error: "Failed to fetch books" });
+  }
+});
 
 app.get("/api/health", (_, res) => res.json({ status: "ok" }));
 app.get("/health", (_, res) => res.json({ status: "ok" }));
