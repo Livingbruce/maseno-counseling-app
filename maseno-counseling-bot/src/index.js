@@ -247,7 +247,7 @@ app.post("/dashboard/activities", async (req, res) => {
     console.log('Creating activity with data:', {
       title,
       description: description || '',
-      counselor_id: 1,
+      counselor_id: 2,
       activity_date: activityDate,
       activity_time: activityTime
     });
@@ -255,7 +255,7 @@ app.post("/dashboard/activities", async (req, res) => {
     // Insert with actual schema columns
     const result = await pool.query(
       "INSERT INTO activities (title, description, counselor_id, activity_date, activity_time, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *",
-      [title, description || '', 1, activityDate, activityTime]
+      [title, description || '', 2, activityDate, activityTime]
     );
     
     console.log('Activity created successfully:', result.rows[0]);
