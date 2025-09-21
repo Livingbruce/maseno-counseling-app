@@ -139,24 +139,12 @@ app.get("/dashboard/appointments", async (req, res) => {
   }
 });
 
-app.get("/dashboard/support/tickets", async (req, res) => {
-  try {
-    console.log("📋 Support tickets endpoint called");
-    
-    // Simple query first to test
-    const result = await pool.query("SELECT * FROM support_tickets ORDER BY created_at DESC LIMIT 10");
-    
-    console.log("📊 Found tickets:", result.rows.length);
-    
-    res.json({ 
-      success: true, 
-      tickets: result.rows,
-      message: "Support tickets endpoint working"
-    });
-  } catch (err) {
-    console.error("Error fetching support tickets:", err);
-    res.status(500).json({ error: "Failed to fetch support tickets", details: err.message });
-  }
+app.get("/dashboard/support/tickets", (req, res) => {
+  res.json({ 
+    success: true, 
+    message: "Support tickets endpoint working",
+    test: "This is a test response"
+  });
 });
 
 app.get("/dashboard/announcements", async (req, res) => {
