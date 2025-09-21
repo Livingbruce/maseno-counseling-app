@@ -119,6 +119,14 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/dashboard/support/tickets", (req, res) => {
+  res.json({ 
+    success: true, 
+    message: "Support tickets endpoint working",
+    test: "This is a test response"
+  });
+});
+
 app.use("/api/announcements", announcementsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
@@ -137,14 +145,6 @@ app.get("/dashboard/appointments", async (req, res) => {
     console.error("Error fetching appointments:", err);
     res.status(500).json({ error: "Failed to fetch appointments" });
   }
-});
-
-app.get("/dashboard/support/tickets", (req, res) => {
-  res.json({ 
-    success: true, 
-    message: "Support tickets endpoint working",
-    test: "This is a test response"
-  });
 });
 
 app.get("/dashboard/announcements", async (req, res) => {
