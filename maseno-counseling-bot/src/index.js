@@ -119,10 +119,10 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/dashboard/support/tickets", (req, res) => {
+app.get("/test-support", (req, res) => {
   res.json({ 
     success: true, 
-    message: "Support tickets endpoint working",
+    message: "Test endpoint working",
     test: "This is a test response"
   });
 });
