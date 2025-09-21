@@ -149,6 +149,88 @@ app.get("/dashboard/announcements", async (req, res) => {
   }
 });
 
+app.get("/dashboard/support/tickets", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const status = req.query.status;
+    const priority = req.query.priority;
+    const offset = (page - 1) * limit;
+
+    // Build dynamic query
+    let whereClause = "";
+    let queryParams = [];
+    let paramCount = 0;
+
+    if (status) {
+      whereClause += ` WHERE st.status = $${++paramCount}`;
+      queryParams.push(status);
+    }
+
+    if (priority) {
+      whereClause += whereClause ? ` AND st.priority = $${++paramCount}` : ` WHERE st.priority = $${++paramCount}`;
+      queryParams.push(priority);
+    }
+
+    // Get total count for pagination
+    const countQuery = `SELECT COUNT(*) as total FROM support_tickets st${whereClause}`;
+    const countResult = await pool.query(countQuery, queryParams);
+    const totalTickets = parseInt(countResult.rows[0].total);
+
+    // Get paginated tickets
+    const ticketsQuery = `
+      SELECT st.*, 
+             COALESCE(st.student_name, 'Unknown') as student_name,
+             COALESCE(st.admission_no, 'N/A') as admission_no
+      FROM support_tickets st
+      ${whereClause}
+      ORDER BY st.updated_at DESC, st.created_at DESC
+      LIMIT $${++paramCount} OFFSET $${++paramCount}
+    `;
+    
+    queryParams.push(limit, offset);
+    const result = await pool.query(ticketsQuery, queryParams);
+    
+    // Only fetch replies for tickets on current page (not all tickets)
+    const ticketsWithReplies = await Promise.all(
+      result.rows.map(async (ticket) => {
+        const repliesResult = await pool.query(
+          `SELECT sm.*, c.name as counselor_name
+           FROM support_messages sm
+           LEFT JOIN counselors c ON sm.sender_id = c.id AND sm.sender_type = 'counselor'
+           WHERE sm.ticket_id = $1
+           ORDER BY sm.created_at ASC
+           LIMIT 50`,
+          [ticket.id]
+        );
+        
+        return {
+          ...ticket,
+          replies: repliesResult.rows
+        };
+      })
+    );
+    
+    const totalPages = Math.ceil(totalTickets / limit);
+    
+    res.json({ 
+      success: true, 
+      tickets: ticketsWithReplies,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalTickets,
+        limit,
+        hasNext: page < totalPages,
+        hasPrev: page > 1
+      }
+    });
+  } catch (err) {
+    console.error("Error fetching support tickets:", err);
+    res.status(500).json({ error: "Failed to fetch support tickets" });
+  }
+});
+
 app.post("/dashboard/announcements", async (req, res) => {
   try {
     const { message, is_force } = req.body;
