@@ -139,16 +139,6 @@ app.get("/dashboard/appointments", async (req, res) => {
   }
 });
 
-app.get("/dashboard/announcements", async (req, res) => {
-  try {
-    const result = await pool.query("SELECT * FROM announcements ORDER BY created_at DESC");
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Error fetching announcements:", err);
-    res.status(500).json({ error: "Failed to fetch announcements" });
-  }
-});
-
 app.get("/dashboard/support/tickets", async (req, res) => {
   try {
     console.log("📋 Support tickets endpoint called");
@@ -166,6 +156,16 @@ app.get("/dashboard/support/tickets", async (req, res) => {
   } catch (err) {
     console.error("Error fetching support tickets:", err);
     res.status(500).json({ error: "Failed to fetch support tickets", details: err.message });
+  }
+});
+
+app.get("/dashboard/announcements", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM announcements ORDER BY created_at DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching announcements:", err);
+    res.status(500).json({ error: "Failed to fetch announcements" });
   }
 });
 
