@@ -157,6 +157,50 @@ app.get("/dashboard/announcements", async (req, res) => {
   }
 });
 
+app.get("/dashboard/support/tickets", async (req, res) => {
+  try {
+    console.log("📋 Support tickets endpoint called");
+    
+    // Get support tickets with replies
+    const ticketsResult = await pool.query(`
+      SELECT st.*, 
+             COALESCE(st.student_name, 'Unknown') as student_name,
+             COALESCE(st.admission_no, 'N/A') as admission_no
+      FROM support_tickets st
+      ORDER BY st.updated_at DESC, st.created_at DESC
+    `);
+    
+    // Get replies for each ticket
+    const ticketsWithReplies = await Promise.all(
+      ticketsResult.rows.map(async (ticket) => {
+        const repliesResult = await pool.query(
+          `SELECT sm.*, c.name as counselor_name
+           FROM support_messages sm
+           LEFT JOIN counselors c ON sm.sender_id = c.id AND sm.sender_type = 'counselor'
+           WHERE sm.ticket_id = $1
+           ORDER BY sm.created_at ASC`,
+          [ticket.id]
+        );
+        
+        return {
+          ...ticket,
+          replies: repliesResult.rows
+        };
+      })
+    );
+    
+    console.log("📊 Found tickets:", ticketsWithReplies.length);
+    
+    res.json({ 
+      success: true, 
+      tickets: ticketsWithReplies
+    });
+  } catch (err) {
+    console.error("Error fetching support tickets:", err);
+    res.status(500).json({ error: "Failed to fetch support tickets", details: err.message });
+  }
+});
+
 app.post("/dashboard/announcements", async (req, res) => {
   try {
     const { message, is_force } = req.body;
